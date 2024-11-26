@@ -1,0 +1,28 @@
+{
+  "name": "copy-button",
+  "type": "registry:ui",
+  "description": "A button that copies text to the clipboard, and globally indicates if its text is actively copied.",
+  "registryDependencies": [
+    "button"
+  ],
+  "dependencies": [
+    "@uidotdev/usehooks"
+  ],
+  "devDependencies": [],
+  "tailwind": {
+    "config": {}
+  },
+  "cssVars": {},
+  "files": [
+    {
+      "path": "copy-button.tsx",
+      "content": "import React from \"react\";\nimport { Button, type ButtonProps } from \"@/components/ui/button\";\nimport { Copy, Check } from \"lucide-react\";\nimport { useCopy } from \"@/components/ui/copy-provider\";\n\nimport { cn } from \"@/lib/utils\";\n\nexport interface CopyButtonProps extends Omit<ButtonProps, \"onClick\"> {\n\ttext: string;\n\tcopiedChildren?: React.ReactNode;\n\tonCopy?: () => void;\n\tCopyIcon?: React.ElementType;\n\tCopiedIcon?: React.ElementType;\n}\n\nexport const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(\n\t(\n\t\t{\n\t\t\ttext,\n\t\t\tchildren = \"Copy to clipboard\",\n\t\t\tclassName,\n\t\t\tCopiedIcon = Copy,\n\t\t\tCopyIcon = Check,\n\t\t\tcopiedChildren = \"Copied\",\n\t\t\tonCopy,\n\t\t\t...props\n\t\t},\n\t\tref,\n\t) => {\n\t\tconst { copiedText, copy } = useCopy();\n\n\t\treturn (\n\t\t\t<Button\n\t\t\t\tref={ref}\n\t\t\t\tclassName={cn(\"flex items-center gap-2\", className)}\n\t\t\t\tonClick={() => {\n\t\t\t\t\tcopy(text);\n\t\t\t\t\tif (onCopy) {\n\t\t\t\t\t\tonCopy();\n\t\t\t\t\t}\n\t\t\t\t}}\n\t\t\t\t{...props}\n\t\t\t>\n\t\t\t\t{copiedText === text ? <CopyIcon /> : <CopiedIcon />}\n\t\t\t\t{copiedText === text ? copiedChildren : children}\n\t\t\t</Button>\n\t\t);\n\t},\n);\nCopyButton.displayName = \"CopyButton\";\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "copy-provider.tsx",
+      "content": "\"use client\";\n\nimport type React from \"react\";\nimport { createContext, useContext, useEffect, useCallback } from \"react\";\nimport { useCopyToClipboard } from \"@uidotdev/usehooks\";\n\ninterface UseCopyContextValue {\n\tcopiedText: string | null;\n\tcopy: (text: string) => Promise<void>;\n}\n\nconst UseCopyContext = createContext<UseCopyContextValue | undefined>(\n\tundefined,\n);\n\nexport const CopyProvider: React.FC<{ children: React.ReactNode }> = ({\n\tchildren,\n}) => {\n\tconst [copiedText, copyToClipboard] = useCopyToClipboard();\n\n\tconst updateClipboardText = useCallback(async () => {\n\t\ttry {\n\t\t\tconst text = await navigator.clipboard.readText();\n\t\t\tcopyToClipboard(text);\n\t\t} catch (error) {\n\t\t\tconsole.error(\"Failed to read clipboard content:\", error);\n\t\t}\n\t}, []);\n\n\tuseEffect(() => {\n\t\tupdateClipboardText();\n\n\t\tconst handleWindowFocus = () => {\n\t\t\tupdateClipboardText();\n\t\t};\n\n\t\twindow.addEventListener(\"focus\", handleWindowFocus);\n\t\treturn () => {\n\t\t\twindow.removeEventListener(\"focus\", handleWindowFocus);\n\t\t};\n\t}, [updateClipboardText]);\n\n\treturn (\n\t\t<UseCopyContext.Provider\n\t\t\tvalue={{\n\t\t\t\tcopiedText,\n\t\t\t\tcopy: copyToClipboard,\n\t\t\t}}\n\t\t>\n\t\t\t{children}\n\t\t</UseCopyContext.Provider>\n\t);\n};\n\nexport const useCopy = (): UseCopyContextValue => {\n\tconst context = useContext(UseCopyContext);\n\tif (!context) {\n\t\tthrow new Error(\"useCopyContext must be used within a CopyProvider\");\n\t}\n\treturn context;\n};\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -50,3 +50,9 @@ The syntax of this file uses the same syntax as `shadcn` requires for the final 
 - `npm run build:demo`: Build the demo.
 - `npm run lint`
 - `npm run dev:server`: Starts a server to host your registry locally. This is useful for testing the registry locally and installing in another project.
+
+## Index
+
+```bash
+bunx --bun shadcn@latest add https://raw.githubusercontent.com/aidansunbury/aidan-shadcn-registry/main/registry/copy-button.json
+```

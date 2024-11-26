@@ -1,9 +1,7 @@
 {
-  "name": "cool-text",
+  "name": "test",
   "type": "registry:ui",
-  "registryDependencies": [
-    "button"
-  ],
+  "registryDependencies": [],
   "dependencies": [],
   "devDependencies": [],
   "tailwind": {
