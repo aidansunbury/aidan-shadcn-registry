@@ -17,6 +17,7 @@
 		"dev:server": "concurrently 'http-server dist' 'npm run dev:build'"
 	},
 	"dependencies": {
+		"@radix-ui/react-dropdown-menu": "^2.1.2",
 		"@radix-ui/react-slot": "^1.1.0",
 		"@uidotdev/usehooks": "^2.4.1",
 		"chalk": "^5.3.0",

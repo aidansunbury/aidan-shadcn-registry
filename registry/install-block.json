@@ -1,0 +1,24 @@
+{
+  "name": "install-block",
+  "type": "registry:ui",
+  "description": "A block for installing dependencies or registry components with a variety of package managers.",
+  "registryDependencies": [
+    "button",
+    "dropdown-menu"
+  ],
+  "dependencies": [
+    "@uidotdev/usehooks"
+  ],
+  "devDependencies": [],
+  "tailwind": {
+    "config": {}
+  },
+  "cssVars": {},
+  "files": [
+    {
+      "path": "install-block.tsx",
+      "content": "\"use client\";\n\nimport { useState, useEffect } from \"react\";\nimport {\n\tDropdownMenu,\n\tDropdownMenuContent,\n\tDropdownMenuItem,\n\tDropdownMenuTrigger,\n} from \"@/components/ui/dropdown-menu\";\nimport { ClipboardIcon, CheckIcon } from \"lucide-react\";\nimport { useCopyToClipboard } from \"@uidotdev/usehooks\";\nimport { cn } from \"@/lib/utils\";\nimport { Button } from \"@/components/ui/button\";\n\ntype PackageManager = \"npm\" | \"yarn\" | \"pnpm\" | \"bun\";\ntype InstallType = \"dependency\" | \"registry-component\";\n\ntype InstallBlockProps = {\n\tenabledPackageManagers?: PackageManager[];\n\tdefaultPackageManager?: PackageManager;\n\tinstallType: InstallType;\n\tinstallItems: string[];\n};\n\nconst dependencyPmMapping = {\n\tnpm: \"npm install\",\n\tyarn: \"yarn add\",\n\tpnpm: \"pnpm add\",\n\tbun: \"bun add\",\n};\n\nconst registryComponentPmMapping = {\n\tnpm: \"npx shadcn@latest add\",\n\tyarn: \"npx shadcn@latest add\",\n\tpnpm: \"pnpm dlx shadcn@latest add\",\n\tbun: \"bunx --bun shadcn@latest add\",\n};\n\nconst getPrefix = (pm: PackageManager, installType: InstallType) => {\n\tif (installType === \"dependency\") {\n\t\treturn dependencyPmMapping[pm];\n\t}\n\treturn registryComponentPmMapping[pm];\n};\n\nexport const InstallBlock = ({\n\tenabledPackageManagers = [\"npm\", \"yarn\", \"pnpm\", \"bun\"],\n\tdefaultPackageManager = \"npm\",\n\tinstallType,\n\tinstallItems,\n}: InstallBlockProps) => {\n\tconst [_, copyToClipboard] = useCopyToClipboard();\n\tconst [copied, setCopied] = useState(false);\n\n\t// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>\n\tuseEffect(() => {\n\t\tsetTimeout(() => {\n\t\t\tsetCopied(false);\n\t\t}, 2000);\n\t}, [copied]);\n\n\tconst suffix = installItems.join(\" \");\n\n\treturn (\n\t\t<div className=\"relative\">\n\t\t\t<pre className=\"mb-4 mt-6 overflow-x-auto rounded-lg border py-2\">\n\t\t\t\t<code className=\"relative rounded px-4 font-mono text-sm\">\n\t\t\t\t\t<span className=\"line\">\n\t\t\t\t\t\t<span style={{ color: \"rgb(179, 146, 240)\" }}>\n\t\t\t\t\t\t\t{getPrefix(defaultPackageManager, installType)}\n\t\t\t\t\t\t</span>\n\t\t\t\t\t\t<span style={{ color: \"rgb(158, 203, 255)\" }}>\n\t\t\t\t\t\t\t{\" \"}\n\t\t\t\t\t\t\t{installItems.join(\" \")}\n\t\t\t\t\t\t</span>\n\t\t\t\t\t</span>\n\t\t\t\t</code>\n\t\t\t</pre>\n\n\t\t\t<div className=\"absolute right-2 top-2 flex gap-2\">\n\t\t\t\t<DropdownMenu>\n\t\t\t\t\t<DropdownMenuTrigger asChild>\n\t\t\t\t\t\t<Button\n\t\t\t\t\t\t\tsize=\"icon\"\n\t\t\t\t\t\t\tvariant=\"ghost\"\n\t\t\t\t\t\t\tclassName={cn(\n\t\t\t\t\t\t\t\t\"relative z-10 h-6 w-6 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors duration-200\",\n\t\t\t\t\t\t\t)}\n\t\t\t\t\t\t>\n\t\t\t\t\t\t\t{copied ? (\n\t\t\t\t\t\t\t\t<CheckIcon className=\"h-3 w-3\" />\n\t\t\t\t\t\t\t) : (\n\t\t\t\t\t\t\t\t<ClipboardIcon className=\"h-3 w-3\" />\n\t\t\t\t\t\t\t)}\n\t\t\t\t\t\t\t<span className=\"sr-only\">Copy</span>\n\t\t\t\t\t\t</Button>\n\t\t\t\t\t</DropdownMenuTrigger>\n\t\t\t\t\t<DropdownMenuContent align=\"end\">\n\t\t\t\t\t\t{enabledPackageManagers.map((pm) => (\n\t\t\t\t\t\t\t<DropdownMenuItem\n\t\t\t\t\t\t\t\tkey={pm}\n\t\t\t\t\t\t\t\tonClick={() => {\n\t\t\t\t\t\t\t\t\tcopyToClipboard(`${getPrefix(pm, installType)} ${suffix}`);\n\t\t\t\t\t\t\t\t\tsetCopied(true);\n\t\t\t\t\t\t\t\t}}\n\t\t\t\t\t\t\t>\n\t\t\t\t\t\t\t\t{pm}\n\t\t\t\t\t\t\t</DropdownMenuItem>\n\t\t\t\t\t\t))}\n\t\t\t\t\t</DropdownMenuContent>\n\t\t\t\t</DropdownMenu>\n\t\t\t</div>\n\t\t</div>\n\t);\n};\n",
+      "type": "registry:ui"
+    }
+  ]
+}

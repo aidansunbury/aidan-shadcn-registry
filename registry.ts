@@ -25,5 +25,29 @@ const registry: RegistryEntry[] = [
 		// Files that make up this component in your src/components/ui folder
 		files: ["copy-button.tsx", "copy-provider.tsx"],
 	},
+	{
+		name: "install-block",
+		type: "registry:ui",
+		description:
+			"A block for installing dependencies or registry components with a variety of package managers.",
+
+		// shadcn-ui components that this component depends on
+		registryDependencies: ["button", "dropdown-menu"],
+
+		// npm dependencies that this component depends on
+		dependencies: ["@uidotdev/usehooks"],
+		devDependencies: [],
+
+		// Tailwind CSS config
+		tailwind: {
+			config: {},
+		},
+
+		// CSS variables
+		cssVars: {},
+
+		// Files that make up this component in your src/components/ui folder
+		files: ["install-block.tsx"],
+	},
 ];
 export default registry;

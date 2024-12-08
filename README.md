@@ -53,6 +53,12 @@ The syntax of this file uses the same syntax as `shadcn` requires for the final 
 
 ## Index
 
+### Copy Button
 ```bash
 bunx --bun shadcn@latest add https://raw.githubusercontent.com/aidansunbury/aidan-shadcn-registry/main/registry/copy-button.json
+```
+
+### Install Block
+```bash
+bunx --bun shadcn@latest add https://raw.githubusercontent.com/aidansunbury/aidan-shadcn-registry/main/registry/install-block.json
 ```
